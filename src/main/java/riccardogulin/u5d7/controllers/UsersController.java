@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import riccardogulin.u5d7.entities.User;
+import riccardogulin.u5d7.exceptions.NotFoundException;
 import riccardogulin.u5d7.services.UsersService;
 
 @RestController
@@ -26,7 +27,7 @@ public class UsersController {
 	// 1. - POST http://localhost:3001/users (+ req.body)
 	@PostMapping("")
 	@ResponseStatus(HttpStatus.CREATED) // <-- 201
-	public User saveUser(@RequestBody User body) {
+	public User saveUser(@RequestBody User body) throws Exception {
 		User createdUser = usersService.save(body);
 		return createdUser;
 	}
@@ -40,13 +41,13 @@ public class UsersController {
 	// 3. - GET http://localhost:3001/users/{id}
 	@GetMapping("/{userId}")
 	public User findById(@PathVariable int userId) throws Exception {
-		return usersService.findById(userId).orElseThrow(() -> new Exception("NON TROVATO"));
+		return usersService.findById(userId).orElseThrow(() -> new NotFoundException(userId));
 	}
 
 	// 4. - PUT http://localhost:3001/users/{id} (+ req.body)
 	@PutMapping("/{userId}")
 	public User findAndUpdate(@PathVariable int userId, @RequestBody User body) throws Exception {
-		return usersService.findByIdAndUpdate(userId, body).orElseThrow(() -> new Exception("NON TROVATO"));
+		return usersService.findByIdAndUpdate(userId, body).orElseThrow(() -> new NotFoundException(userId));
 	}
 
 	// 5. - DELETE http://localhost:3001/users/{id}
